@@ -95,7 +95,7 @@ function loadESXPlayer(identifier, playerId)
 	}
 
 	table.insert(tasks, function(cb)
-		MySQL.Async.fetchAll('SELECT * FROM user_batch WHERE identifier = @identifier', {
+		MySQL.Async.fetchAll('SELECT * FROM user_batch WHERE identifier = @identifier ORDER BY `updated_at` DESC', {
 			['@identifier'] = identifier
 		}, function(result)
 			for _,value in pairs(result) do
@@ -235,8 +235,8 @@ function loadESXPlayer(identifier, playerId)
 	end)
 
 	Async.parallel(tasks, function(results)
-		ESX.LastInventory[playerId] = {}
-		for k,v in ipairs(userData.inventory) do
+		ESX.LastInventory[identifier] = {}
+		for k,v in pairs(userData.inventory) do
 			if batch[v.name] then
 				v.batch = batch[v.name]
 				v.batchCount = batchCount[v.name]
@@ -244,7 +244,7 @@ function loadESXPlayer(identifier, playerId)
 				v.batch = {}
 				v.batchCount = 0
 			end
-			ESX.LastInventory[playerId][v.name] = {count = v.count, batch = ESX.CopyTable(v.batch)}
+			ESX.LastInventory[identifier][v.name] = {count = v.count, batch = ESX.CopyTable(v.batch)}
 		end
 
 		local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.coords)
@@ -323,7 +323,7 @@ AddEventHandler('playerDropped', function(reason)
 		TriggerEvent('esx:playerDropped', playerId, reason)
 
 		ESX.SavePlayer(xPlayer, function()
-			ESX.LastInventory[identifier] = nil
+			ESX.LastInventory[identifier].playerDropped = true
 			ESX.Players[playerId] = nil
 		end)
 	end
@@ -615,7 +615,7 @@ end)
 
 AddEventHandler("esx:setAccountMoney", function(user, value, detail) ESX.GetPlayerFromId(user).setAccountMoney(value, detail) end)
 AddEventHandler("esx:addAccountMoney", function(user, value, detail) ESX.GetPlayerFromId(user).addAccountMoney(value, detail) end)
-AddEventHandler("esx:removeAccountMoney", function(user, value, detail) ESX.GetPlayerFromId(user).addAccountMoney(value, detail) end)
+AddEventHandler("esx:removeAccountMoney", function(user, value, detail) ESX.GetPlayerFromId(user).removeAccountMoney(value, detail) end)
 
 -- Add support for EssentialMode >6.4.x
 AddEventHandler("es:setMoney", function(user, value) ESX.GetPlayerFromId(user).setMoney(value, true) end)

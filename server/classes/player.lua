@@ -320,7 +320,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 					if batchCount > 0 then
 						item.batch[batchNumber].count = batchCount
 					else
-						item.batch[batchNumber] = nil
+						item.batch[batchNumber] = false
 					end
 					item.batchCount = item.batchCount - count
 				end
@@ -490,6 +490,8 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 			self.triggerEvent('esx:addWeapon', weaponName, ammo)
 			self.triggerEvent('esx:addInventoryItem', weaponLabel, false, true)
 		else
+			itemInfo.weapon = weaponName
+			itemInfo.count = ammo
 			self.addInventoryItem(weaponName, ammo, itemInfo)
 		end
 	end

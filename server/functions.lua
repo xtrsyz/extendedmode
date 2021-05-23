@@ -187,33 +187,57 @@ ESX.SaveBatchs = function(xPlayer)
 		for k, inventory in pairs(xPlayer.inventory) do
 			local LastInventory = ESX.LastInventory[identifier][inventory.name] or {count = 0, batch = {}}
 			if LastInventory.count ~= inventory.count then
-				for batchNumber, batch in pairs(inventory.batch) do
-					if not LastInventory.batch[batchNumber] or LastInventory.batch[batchNumber].count ~= batch.count then
-						LastInventory.batch[batchNumber] = {count = batch.count}
-						MySQL.Async.execute('INSERT INTO user_batch (identifier, name, batch, count, info) VALUES (@identifier, @name, @batch, @count, @info) ON DUPLICATE KEY UPDATE count = @count, info = @info', {
-							['@identifier'] = identifier,
-							['@name'] = inventory.name,
-							['@batch'] = batchNumber,
-							['@count'] = batch.count,
-							['@info'] = json.encode(batch.info)
-						})
+				if inventory.count < 1 then
+					MySQL.Async.execute('DELETE FROM user_batch WHERE identifier=@identifier AND name=@name', {
+						['@identifier'] = identifier,
+						['@name'] = inventory.name,
+					})
+					for batchNumber, batch in pairs(inventory.batch) do
+						inventory.batch[batchNumber] = nil
+						LastInventory.batch[batchNumber] = nil
+					end
+				else
+					for batchNumber, batch in pairs(inventory.batch) do
+						if batch == false then
+							MySQL.Async.execute('DELETE FROM user_batch WHERE identifier=@identifier AND name=@name AND batch=@batch', {
+								['@identifier'] = identifier,
+								['@name'] = inventory.name,
+								['@batch'] = batchNumber,
+							})
+							inventory.batch[batchNumber] = nil
+							LastInventory.batch[batchNumber] = nil
+						else
+							if not LastInventory.batch[batchNumber] or LastInventory.batch[batchNumber].count ~= batch.count then
+								LastInventory.batch[batchNumber] = {count = batch.count}
+								MySQL.Async.execute('INSERT INTO user_batch (identifier, name, batch, count, info) VALUES (@identifier, @name, @batch, @count, @info) ON DUPLICATE KEY UPDATE count = @count, info = @info', {
+									['@identifier'] = identifier,
+									['@name'] = inventory.name,
+									['@batch'] = batchNumber,
+									['@count'] = batch.count,
+									['@info'] = json.encode(batch.info)
+								})
+							end
+						end
 					end
 				end
 				LastInventory.count = inventory.count
 			end
-		end		
+		end
+		if ESX.LastInventory[identifier].playerDropped then ESX.LastInventory[identifier] = nil end
 	end)
 end
 
 ESX.SavePlayers = function(finishedCB)
 	CreateThread(function()
 		local savedPlayers = 0
-		local playersToSave = #ESX.Players
+		-- local playersToSave = #ESX.Players
+		local playersToSave = 0
 		local maxTimeout = 20000
 		local currentTimeout = 0
 	
 		-- Save Each player
-		for _, xPlayer in ipairs(ESX.Players) do
+		for _, xPlayer in pairs(ESX.Players) do
+			playersToSave = playersToSave + 1
 			ESX.SavePlayer(xPlayer, function(rowsChanged)
 				if rowsChanged == 1 then
 					savedPlayers = savedPlayers	+ 1
