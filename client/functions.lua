@@ -474,7 +474,7 @@ end
 ESX.Game.GetPlayers = function(onlyOtherPlayers, returnKeyValue, returnPeds)
 	local players, myPlayer = {}, PlayerId()
 
-	for k,player in ipairs(GetActivePlayers()) do
+	for k,player in pairs(GetActivePlayers()) do
 		local ped = GetPlayerPed(player)
 
 		if DoesEntityExist(ped) and ((onlyOtherPlayers and player ~= myPlayer) or not onlyOtherPlayers) then
@@ -825,7 +825,7 @@ ESX.ShowInventory = function()
 		end
 	end
 
-	for k,v in ipairs(ESX.PlayerData.inventory) do
+	for k,v in pairs(ESX.PlayerData.inventory) do
 		if v.count > 0 then
 			currentWeight = currentWeight + (v.weight * v.count)
 
@@ -841,7 +841,7 @@ ESX.ShowInventory = function()
 		end
 	end
 
-	for k,v in ipairs(Config.Weapons) do
+	for k,v in pairs(Config.Weapons) do
 		local weaponHash = GetHashKey(v.name)
 
 		if HasPedGotWeapon(playerPed, weaponHash, false) then
@@ -909,7 +909,7 @@ ESX.ShowInventory = function()
 				if #playersNearby > 0 then
 					local players, elements = {}, {}
 
-					for k,player in ipairs(playersNearby) do
+					for k,player in pairs(playersNearby) do
 						players[GetPlayerServerId(player)] = true
 					end
 

@@ -64,7 +64,7 @@ MySQL.ready(function()
 
 			-- Coagulate table columns from results
 			local tableMatchings = {}
-			for _, data in ipairs(informationSchemaResult) do
+			for _, data in pairs(informationSchemaResult) do
 				tableMatchings[data.t] = tableMatchings[data.t] or {}
 				tableMatchings[data.t][data.c] = true
 			end
@@ -103,7 +103,7 @@ MySQL.ready(function()
 
 		if pcall(databaseCheckFunction) then
 			MySQL.Async.fetchAll('SELECT * FROM items', {}, function(result)
-				for k,v in ipairs(result) do
+				for k,v in pairs(result) do
 					ESX.Items[v.name] = v
 					if not ESX.Items[v.name].canRemove then
 						if v.can_remove ~= nil then
@@ -115,7 +115,7 @@ MySQL.ready(function()
 				end
 			end)
 
-			for k,v in ipairs(Config.Weapons) do
+			for k,v in pairs(Config.Weapons) do
 				ESX.Items[v.name] = {
 					name = v.name,
 					label = v.label,
@@ -130,13 +130,13 @@ MySQL.ready(function()
 			end
 		
 			MySQL.Async.fetchAll('SELECT * FROM jobs', {}, function(jobs)
-				for k,v in ipairs(jobs) do
+				for k,v in pairs(jobs) do
 					ESX.Jobs[v.name] = v
 					ESX.Jobs[v.name].grades = {}
 				end
 		
 				MySQL.Async.fetchAll('SELECT * FROM job_grades', {}, function(jobGrades)
-					for k,v in ipairs(jobGrades) do
+					for k,v in pairs(jobGrades) do
 						if ESX.Jobs[v.job_name] then
 							ESX.Jobs[v.job_name].grades[tostring(v.grade)] = v
 						else

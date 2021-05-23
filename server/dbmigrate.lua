@@ -42,7 +42,7 @@ function initiateMigration()
 	print("YOU WILL BE NOTIFIED ONCE THE MIGRATION PROCESS IS COMPLETE!")
 	print("^8----------------------------------------------------------------------------------^0")
 	MySQL.Async.fetchAll('SELECT identifier FROM users', { }, function(identifiers)
-		for _, ident in ipairs(identifiers) do
+		for _, ident in pairs(identifiers) do
 			allIdentifiers[#allIdentifiers + 1] = ident.identifier
 		end
 		totalCount = #allIdentifiers
@@ -59,7 +59,7 @@ function getOldInventory(identifier)
 		['@identifier'] = identifier
 	}, function(oldInvent)
 		if oldInvent ~= nil then
-			for _, databaseRow in ipairs(oldInvent) do
+			for _, databaseRow in pairs(oldInvent) do
 				inventTable[databaseRow.item] = databaseRow.count
 			end
 		end
@@ -71,7 +71,7 @@ function getOldAccounts(identifier)
 		['@identifier'] = identifier
 	}, function(oldAccounts)
 		if oldAccounts ~= nil then
-			for _, databaseRow in ipairs(oldAccounts) do
+			for _, databaseRow in pairs(oldAccounts) do
 				accountTable[databaseRow.name] = databaseRow.money
 			end
 		end
@@ -90,7 +90,7 @@ function getOldUserAccounts(identifier)
 end
 
 function processUsers()
-	for _, identKey in ipairs(allIdentifiers) do
+	for _, identKey in pairs(allIdentifiers) do
 		local alreadyDone = false
 		MySQL.Async.fetchAll('SELECT inventory, accounts FROM users WHERE identifier = @identifier', {
 			['@identifier'] = identKey

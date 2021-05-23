@@ -9,7 +9,7 @@ function onPlayerJoined(playerId)
 	local identifier
 	local license
 	
-	for k,v in ipairs(GetPlayerIdentifiers(playerId)) do
+	for k,v in pairs(GetPlayerIdentifiers(playerId)) do
 		if string.match(v, Config.PrimaryIdentifier) then
 			identifier = v
 		end
@@ -55,7 +55,7 @@ AddEventHandler('playerConnecting', function(name, setCallback, deferrals)
 	local playerId, identifier = source
 	Wait(100)
 
-	for k,v in ipairs(GetPlayerIdentifiers(playerId)) do
+	for k,v in pairs(GetPlayerIdentifiers(playerId)) do
 		if string.match(v, Config.PrimaryIdentifier) then
 			identifier = v
 			break
@@ -558,7 +558,7 @@ AddEventHandler('esx:onPickup', function(id)
 				xPlayer.addWeapon(pickup.name, pickup.count, pickup.batch)
 				xPlayer.setWeaponTint(pickup.name, pickup.tintIndex)
 
-				for k,v in ipairs(pickup.components) do
+				for k,v in pairs(pickup.components) do
 					xPlayer.addWeaponComponent(pickup.name, v)
 				end
 			end

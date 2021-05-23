@@ -123,7 +123,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		if minimal then
 			local minimalAccounts = {}
 
-			for k,v in ipairs(self.accounts) do
+			for k,v in pairs(self.accounts) do
 				minimalAccounts[v.name] = v.money
 			end
 
@@ -134,7 +134,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 	end
 
 	self.getAccount = function(account)
-		for k,v in ipairs(self.accounts) do
+		for k,v in pairs(self.accounts) do
 			if v.name == account then
 				return v
 			end
@@ -145,7 +145,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		if minimal then
 			local minimalInventory = {}
 
-			for k,v in ipairs(self.inventory) do
+			for k,v in pairs(self.inventory) do
 				if v.count > 0 then
 					minimalInventory[v.name] = v.count
 				end
@@ -165,14 +165,14 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		if minimal then
 			local minimalLoadout = {}
 
-			for k,v in ipairs(self.loadout) do
+			for k,v in pairs(self.loadout) do
 				minimalLoadout[v.name] = {ammo = v.ammo, quality = v.quality, serial = v.serial}
 				if v.tintIndex > 0 then minimalLoadout[v.name].tintIndex = v.tintIndex end
 
 				if #v.components > 0 then
 					local components = {}
 
-					for k2,component in ipairs(v.components) do
+					for k2,component in pairs(v.components) do
 						if component ~= 'clip_default' then
 							table.insert(components, component)
 						end
@@ -245,7 +245,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local found = false
 		local newItem
 
-		for k,v in ipairs(self.inventory) do
+		for k,v in pairs(self.inventory) do
 			if v.name == name then
 				found = true
 				return v
@@ -566,11 +566,11 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 	self.removeWeapon = function(weaponName, ammo)
 		local weaponLabel
 
-		for k,v in ipairs(self.loadout) do
+		for k,v in pairs(self.loadout) do
 			if v.name == weaponName then
 				weaponLabel = v.label
 
-				for k2,v2 in ipairs(v.components) do
+				for k2,v2 in pairs(v.components) do
 					self.removeWeaponComponent(weaponName, v2)
 				end
 
@@ -593,7 +593,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 			if component then
 				if self.hasWeaponComponent(weaponName, weaponComponent) then
-					for k,v in ipairs(self.loadout[loadoutNum].components) do
+					for k,v in pairs(self.loadout[loadoutNum].components) do
 						if v == weaponComponent then
 							table.remove(self.loadout[loadoutNum].components, k)
 							break
@@ -620,7 +620,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local loadoutNum, weapon = self.getWeapon(weaponName)
 
 		if weapon then
-			for k,v in ipairs(weapon.components) do
+			for k,v in pairs(weapon.components) do
 				if v == weaponComponent then
 					return true
 				end
@@ -633,7 +633,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 	end
 
 	self.hasWeapon = function(weaponName)
-		for k,v in ipairs(self.loadout) do
+		for k,v in pairs(self.loadout) do
 			if v.name == weaponName then
 				return true
 			end
@@ -643,7 +643,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 	end
 
 	self.getWeapon = function(weaponName)
-		for k,v in ipairs(self.loadout) do
+		for k,v in pairs(self.loadout) do
 			if v.name == weaponName then
 				return k, v
 			end

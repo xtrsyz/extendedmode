@@ -27,7 +27,7 @@ AddEventHandler('esx:playerLoaded', function(playerData)
 	end
 
 	if Config.EnableHud then
-		for k,v in ipairs(playerData.accounts) do
+		for k,v in pairs(playerData.accounts) do
 			local accountTpl = '<div><img src="img/accounts/' .. v.name .. '.png"/>&nbsp;{{money}}</div>'
 			ESX.UI.HUD.RegisterElement('account_' .. v.name, k, 0, accountTpl, {money = ESX.Math.GroupDigits(v.money)})
 		end
@@ -85,7 +85,7 @@ AddEventHandler('esx:restoreLoadout', function()
 	local ammoTypes = {}
 	RemoveAllPedWeapons(playerPed, true)
 
-	for k,v in ipairs(ESX.PlayerData.loadout) do
+	for k,v in pairs(ESX.PlayerData.loadout) do
 		local weaponName = v.name
 
 		GiveWeaponToPed(playerPed, weaponName, 0, false, false)
@@ -93,7 +93,7 @@ AddEventHandler('esx:restoreLoadout', function()
 
 		local ammoType = GetPedAmmoTypeFromWeapon(playerPed, weaponName)
 
-		for k2,v2 in ipairs(v.components) do
+		for k2,v2 in pairs(v.components) do
 			local componentHash = ESX.GetWeaponComponent(weaponName, v2).hash
 			GiveWeaponComponentToPed(playerPed, weaponName, componentHash)
 		end
@@ -107,7 +107,7 @@ end)
 
 RegisterNetEvent('esx:setAccountMoney')
 AddEventHandler('esx:setAccountMoney', function(account)
-	for k,v in ipairs(ESX.PlayerData.accounts) do
+	for k,v in pairs(ESX.PlayerData.accounts) do
 		if v.name == account.name then
 			ESX.PlayerData.accounts[k] = account
 			break
@@ -125,7 +125,7 @@ RegisterNetEvent('esx:addInventoryItem')
 AddEventHandler('esx:addInventoryItem', function(item, count, showNotification, newItem)
 	local found = false
 
-	for k,v in ipairs(ESX.PlayerData.inventory) do
+	for k,v in pairs(ESX.PlayerData.inventory) do
 		if v.name == item then
 			ESX.UI.ShowInventoryItemNotification(true, v.label, count - v.count)
 			ESX.PlayerData.inventory[k].count = count
@@ -158,7 +158,7 @@ end)
 
 RegisterNetEvent('esx:removeInventoryItem')
 AddEventHandler('esx:removeInventoryItem', function(item, count, showNotification, batch)
-	for k,v in ipairs(ESX.PlayerData.inventory) do
+	for k,v in pairs(ESX.PlayerData.inventory) do
 		if v.name == item then
 			ESX.UI.ShowInventoryItemNotification(false, v.label, v.count - count)
 			ESX.PlayerData.inventory[k].count = count
@@ -329,7 +329,7 @@ AddEventHandler('esx:deleteVehicle', function(radius)
 		radius = tonumber(radius) + 0.01
 		local vehicles = ESX.Game.GetVehiclesInArea(GetEntityCoords(playerPed), radius)
 
-		for k,entity in ipairs(vehicles) do
+		for k,entity in pairs(vehicles) do
 			local attempt = 0
 
 			while not NetworkHasControlOfEntity(entity) and attempt < 100 and DoesEntityExist(entity) do
@@ -435,7 +435,7 @@ CreateThread(function()
 							pickup.object = CreateWeaponObject(pickup.name, 50, pickup.coords, true, 1.0, 0)
 							SetWeaponObjectTintIndex(pickup.object, pickup.tint)
 
-							for _, comp in ipairs(pickup.components) do
+							for _, comp in pairs(pickup.components) do
 								local component = ESX.GetWeaponComponent(pickup.name, comp)
 								GiveWeaponComponentToWeaponObject(pickup.object, component.hash)
 							end

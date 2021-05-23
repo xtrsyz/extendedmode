@@ -22,7 +22,7 @@ end
 
 ESX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 	if type(name) == 'table' then
-		for k,v in ipairs(name) do
+		for k,v in pairs(name) do
 			ESX.RegisterCommand(v, group, cb, allowConsole, suggestion)
 		end
 
@@ -64,7 +64,7 @@ ESX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 				if not error and command.suggestion.arguments then
 					local newArgs = {}
 
-					for k,v in ipairs(command.suggestion.arguments) do
+					for k,v in pairs(command.suggestion.arguments) do
 						if v.type then
 							if v.type == 'number' then
 								local newArg = tonumber(args[k])
@@ -139,7 +139,7 @@ ESX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 	end, true)
 
 	if type(group) == 'table' then
-		for k,v in ipairs(group) do
+		for k,v in pairs(group) do
 			ExecuteCommand(('add_ace group.%s command.%s allow'):format(v, name))
 		end
 	else

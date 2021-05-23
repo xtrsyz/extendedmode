@@ -13,7 +13,7 @@ end
 
 function ESX.Table.Set(t)
 	local set = {}
-	for k,v in ipairs(t) do set[v] = true end
+	for k,v in pairs(t) do set[v] = true end
 	return set
 end
 
