@@ -416,6 +416,6 @@ ESX.RandomString = function(length)
 		for c = 65, 90  do table.insert(charset, string.char(c)) end
 		for c = 97, 122 do table.insert(charset, string.char(c)) end
 	end
-	math.randomseed(os.clock()^5)
+	math.randomseed(os.time()*os.clock())
 	return ESX.RandomString(length - 1) .. charset[math.random(1, #charset)]
 end

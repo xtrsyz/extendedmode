@@ -283,6 +283,9 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		if item then
 			count = ESX.Math.Round(count)
 			item.count = item.count + count
+			if not itemBatch and ESX.Items[name].batch then
+				itemBatch = ESX.CopyTable(ESX.Items[name].batch)
+			end
 			if itemBatch then
 				if not itemBatch.batch then
 					itemBatch.batch = ESX.GetBatch()
@@ -297,7 +300,11 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 				end
 				item.batchCount = item.batchCount + count
 			end
-			self.weight = self.weight + (item.weight * count)
+			if item.weapon then
+				self.weight = self.weight + item.weight + (count * 10)
+			else
+				self.weight = self.weight + (item.weight * count)
+			end
 
 			TriggerEvent('esx:onAddInventoryItem', self.source, item.name, item.count, item.batch)
 			self.triggerEvent('esx:addInventoryItem', item.name, item.count, false, item)
@@ -330,7 +337,11 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 					item.batchCount = 0
 				end
 
-				self.weight = self.weight - (item.weight * count)
+				if item.weapon then
+					self.weight = self.weight - item.weight - (count * 10)
+				else
+					self.weight = self.weight - (item.weight * count)
+				end
 
 				TriggerEvent('esx:onRemoveInventoryItem', self.source, item.name, item.count, batchNumber)
 				self.triggerEvent('esx:removeInventoryItem', item.name, item.count, false, item.batch)

@@ -104,6 +104,9 @@ MySQL.ready(function()
 		if pcall(databaseCheckFunction) then
 			MySQL.Async.fetchAll('SELECT * FROM items', {}, function(result)
 				for k,v in pairs(result) do
+					if v.batch ~= nil and v.batch ~= '' then
+						v.batch = json.decode(v.batch)
+					end
 					ESX.Items[v.name] = v
 					if not ESX.Items[v.name].canRemove then
 						if v.can_remove ~= nil then
@@ -116,8 +119,14 @@ MySQL.ready(function()
 			end)
 
 			for k,v in pairs(Config.Weapons) do
+				local berat, label = false, false
+				if ESX.Items[v.name] then
+					berat = ESX.Items[v.name].weight
+					label = ESX.Items[v.name].label
+				end
 				ESX.Items[v.name] = {
 					name = v.name,
+					weapon = v.name,
 					label = v.label,
 					ammo = 0,
 					quality = 100,
@@ -127,6 +136,12 @@ MySQL.ready(function()
 					limit = false,
 					canRemove = true
 				}
+				if berat then
+					ESX.Items[v.name].weight = berat
+				end
+				if label then
+					ESX.Items[v.name].label = label
+				end
 			end
 		
 			MySQL.Async.fetchAll('SELECT * FROM jobs', {}, function(jobs)

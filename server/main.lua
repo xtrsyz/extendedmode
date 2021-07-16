@@ -83,8 +83,7 @@ end)
 
 function loadESXPlayer(identifier, playerId)
 	local tasks = {}
-	local batch = {}
-	local batchCount = {}
+	local batchItems = {}
 	local userData = {
 		accounts = {},
 		inventory = {},
@@ -98,14 +97,15 @@ function loadESXPlayer(identifier, playerId)
 		MySQL.Async.fetchAll('SELECT * FROM user_batch WHERE identifier = @identifier ORDER BY `updated_at` DESC', {
 			['@identifier'] = identifier
 		}, function(result)
-			for _,value in pairs(result) do
+			batchItems = result
+			--[[for _,value in pairs(result) do
 				if not batch[value.name] then 
 					batch[value.name] = {}
 					batchCount[value.name] = 0
 				end
 				batch[value.name][value.batch] = {count = value.count, info = json.decode(value.info)}
 				batchCount[value.name] = batchCount[value.name] + value.count
-			end
+			end--]]
 			cb()
 		end)
 	end)
@@ -176,7 +176,11 @@ function loadESXPlayer(identifier, playerId)
 			for name,item in pairs(ESX.Items) do
 				local count = foundItems[name] or 0
 				if count > 0 then
-					userData.weight = userData.weight + (item.weight * count)
+					if item.weapon then
+						userData.weight = userData.weight + item.weight + (count * 10)
+					else
+						userData.weight = userData.weight + (item.weight * count)
+					end
 					local newItem = {}
 					for key,val in pairs(item) do
 						newItem[key] = val
@@ -219,6 +223,9 @@ function loadESXPlayer(identifier, playerId)
 							tintIndex = weapon.tintIndex
 						})
 					end
+					if ESX.Items[name] then
+						userData.weight = userData.weight + ESX.Items[name].weight + (weapon.ammo * 10)
+					end
 				end
 			end
 
@@ -235,6 +242,34 @@ function loadESXPlayer(identifier, playerId)
 	end)
 
 	Async.parallel(tasks, function(results)
+		local batch = {}
+		local batchCount = {}
+		local itemCount = {}
+
+		for k,v in pairs(userData.inventory) do
+			itemCount[v.name] = v.count
+		end
+
+		for _,value in pairs(batchItems) do
+			if itemCount[value.name] and itemCount[value.name] < value.count then
+				-- delete database
+				MySQL.Async.execute('DELETE FROM user_batch WHERE id = @id', {
+					['@id'] = value.id,					
+				}, function(rowsChanged)
+					-- nothing
+				end)
+			else
+				if not batch[value.name] then 
+					batch[value.name] = {}
+					batchCount[value.name] = 0
+				end
+				batch[value.name][value.batch] = {count = value.count, info = json.decode(value.info)}
+				batchCount[value.name] = batchCount[value.name] + value.count
+			end
+			if itemCount[value.name] then itemCount[value.name] = itemCount[value.name] - value.count end
+		end
+		itemCount = nil
+
 		ESX.LastInventory[identifier] = {}
 		for k,v in pairs(userData.inventory) do
 			if batch[v.name] then

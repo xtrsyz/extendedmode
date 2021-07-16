@@ -404,6 +404,7 @@ ESX.Game.SpawnLocalObject = function(model, coords, cb)
 end
 
 ESX.Game.DeleteVehicle = function(vehicle)
+	TriggerEvent('persistent-vehicles/forget-vehicle', vehicle)
 	SetEntityAsMissionEntity(vehicle, false, true)
 	DeleteVehicle(vehicle)
 end

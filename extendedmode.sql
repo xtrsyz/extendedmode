@@ -24,6 +24,7 @@ CREATE TABLE `items` (
 );
 
 CREATE TABLE `user_batch` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`identifier` VARCHAR(60) NOT NULL,
 	`name` VARCHAR(50) NOT NULL,
 	`batch` VARCHAR(50) NOT NULL,
@@ -31,7 +32,8 @@ CREATE TABLE `user_batch` (
 	`count` INT(11) NOT NULL DEFAULT 0,
 	`created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
 
-	PRIMARY KEY (`identifier`, `name`, `batch`)
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `UNIQUE` (`identifier`, `name`, `batch`)
 );
 
 CREATE TABLE `job_grades` (
