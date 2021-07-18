@@ -234,7 +234,12 @@ function loadESXPlayer(identifier, playerId)
 				userData.coords = json.decode(result[1].position)
 			else
 				print('[ExtendedMode] [^3WARNING^7] Column "position" in "users" table is missing required default value. Using backup coords, fix your database.')
-				userData.coords = Config.FirstSpawnCoords
+				if Config.FirstSpawnCoords.x then
+					userData.coords = Config.FirstSpawnCoords
+				else
+					math.randomseed(os.time()*os.clock())
+					userData.coords = Config.FirstSpawnCoords[math.random(1, #Config.FirstSpawnCoords)]
+				end
 			end
 
 			cb()

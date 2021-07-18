@@ -677,7 +677,9 @@ ESX.Game.GetVehicleProperties = function(vehicle)
 			modTrimB          = GetVehicleMod(vehicle, 44),
 			modTank           = GetVehicleMod(vehicle, 45),
 			modWindows        = GetVehicleMod(vehicle, 46),
-			modLivery         = GetVehicleLivery(vehicle)
+			modStandardLivery = GetVehicleMod(vehicle, 48),
+			modLivery         = GetVehicleLivery(vehicle),
+			bulletProofTyres  = not GetVehicleTyresCanBurst(vehicle)
 		}
 	else
 		return
@@ -764,10 +766,9 @@ ESX.Game.SetVehicleProperties = function(vehicle, props)
 		if props.modTank then SetVehicleMod(vehicle, 45, props.modTank, false) end
 		if props.modWindows then SetVehicleMod(vehicle, 46, props.modWindows, false) end
 
-		if props.modLivery then
-			SetVehicleMod(vehicle, 48, props.modLivery, false)
-			SetVehicleLivery(vehicle, props.modLivery)
-		end
+		if props.bulletProofTyres ~= nil then SetVehicleTyresCanBurst(vehicle, not props.bulletProofTyres) end
+		if props.modLivery then SetVehicleLivery(vehicle, props.modLivery) end
+		if props.modStandardLivery then SetVehicleMod(vehicle, 48, props.modStandardLivery, false) end
 
 		if props.bodyHealth then SetVehicleBodyHealth(vehicle, props.bodyHealth + 0.0) end
 		if props.engineHealth then SetVehicleEngineHealth(vehicle, props.engineHealth + 0.0) end
