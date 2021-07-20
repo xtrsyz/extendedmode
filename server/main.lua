@@ -98,14 +98,6 @@ function loadESXPlayer(identifier, playerId)
 			['@identifier'] = identifier
 		}, function(result)
 			batchItems = result
-			--[[for _,value in pairs(result) do
-				if not batch[value.name] then 
-					batch[value.name] = {}
-					batchCount[value.name] = 0
-				end
-				batch[value.name][value.batch] = {count = value.count, info = json.decode(value.info)}
-				batchCount[value.name] = batchCount[value.name] + value.count
-			end--]]
 			cb()
 		end)
 	end)
@@ -177,7 +169,7 @@ function loadESXPlayer(identifier, playerId)
 				local count = foundItems[name] or 0
 				if count > 0 then
 					if item.weapon then
-						userData.weight = userData.weight + item.weight + (count * 10)
+						userData.weight = userData.weight + item.weight + (count * item.ammo_weight)
 					else
 						userData.weight = userData.weight + (item.weight * count)
 					end
@@ -224,7 +216,8 @@ function loadESXPlayer(identifier, playerId)
 						})
 					end
 					if ESX.Items[name] then
-						userData.weight = userData.weight + ESX.Items[name].weight + (weapon.ammo * 10)
+						print(json.encode(ESX.Items[name]))
+						userData.weight = userData.weight + ESX.Items[name].weight + (weapon.ammo * ESX.Items[name].ammo_weight)
 					end
 				end
 			end

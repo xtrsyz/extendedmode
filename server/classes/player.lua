@@ -301,7 +301,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 				item.batchCount = item.batchCount + count
 			end
 			if item.weapon then
-				self.weight = self.weight + item.weight + (count * 10)
+				self.weight = self.weight + item.weight + (count * item.ammo_weight)
 			else
 				self.weight = self.weight + (item.weight * count)
 			end
@@ -338,7 +338,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 				end
 
 				if item.weapon then
-					self.weight = self.weight - item.weight - (count * 10)
+					self.weight = self.weight - item.weight - (count * item.ammo_weight)
 				else
 					self.weight = self.weight - (item.weight * count)
 				end
@@ -500,6 +500,11 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 			self.triggerEvent('esx:addWeapon', weaponName, ammo)
 			self.triggerEvent('esx:addInventoryItem', weaponLabel, false, true)
+
+			local item = self.getInventoryItem(weaponName)
+			if item then
+				self.weight = self.weight + item.weight + (ammo * item.ammo_weight)
+			end
 		else
 			itemInfo.weapon = weaponName
 			itemInfo.count = ammo
@@ -529,6 +534,11 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		if weapon then
 			weapon.ammo = weapon.ammo + ammoCount
 			self.triggerEvent('esx:setWeaponAmmo', weaponName, weapon.ammo)
+
+			local item = self.getInventoryItem(weaponName)
+			if item then
+				self.weight = self.weight + (ammoCount * item.ammo_weight)
+			end
 		end
 	end
 
@@ -537,7 +547,13 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 		if weapon then
 			if ammoCount < weapon.ammo then
+				local count = weapon.ammo - ammoCount
 				weapon.ammo = ammoCount
+
+				local item = self.getInventoryItem(weaponName)
+				if item then
+					self.weight = self.weight - (count * item.ammo_weight)
+				end
 			end
 		end
 	end
@@ -580,6 +596,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		for k,v in pairs(self.loadout) do
 			if v.name == weaponName then
 				weaponLabel = v.label
+				if ammo == nil then ammo = v.ammo end
 
 				for k2,v2 in pairs(v.components) do
 					self.removeWeaponComponent(weaponName, v2)
@@ -593,6 +610,11 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		if weaponLabel then
 			self.triggerEvent('esx:removeWeapon', weaponName, ammo)
 			self.triggerEvent('esx:removeInventoryItem', weaponLabel, false, true)
+
+			local item = self.getInventoryItem(weaponName)
+			if item then
+				self.weight = self.weight - item.weight - (ammo * item.ammo_weight)
+			end
 		end
 	end
 
@@ -624,6 +646,11 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		if weapon then
 			weapon.ammo = weapon.ammo - ammoCount
 			self.triggerEvent('esx:setWeaponAmmo', weaponName, weapon.ammo)
+
+			local item = self.getInventoryItem(weaponName)
+			if item then
+				self.weight = self.weight - (ammoCount * item.ammo_weight)
+			end
 		end
 	end
 

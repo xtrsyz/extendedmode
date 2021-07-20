@@ -116,34 +116,39 @@ MySQL.ready(function()
 						end
 					end
 				end
+				
+				for k,v in pairs(Config.Weapons) do
+					local weight, ammo_weight, label = false, false, false
+					if ESX.Items[v.name] then
+						weight = ESX.Items[v.name].weight
+						ammo_weight = ESX.Items[v.name].ammo_weight or 0
+						label = ESX.Items[v.name].label
+					end
+					ESX.Items[v.name] = {
+						name = v.name,
+						weapon = v.name,
+						label = v.label,
+						ammo = 0,
+						quality = 100,
+						components = {},
+						tintIndex = 0,
+						weight = Config.WeaponWeight or 0,
+						ammo_weight = Config.AmmoWeight or 0,
+						limit = false,
+						canRemove = true
+					}
+					if weight then
+						ESX.Items[v.name].weight = weight
+					end
+					if ammo_weight then
+						ESX.Items[v.name].ammo_weight = ammo_weight
+					end
+					if label then
+						ESX.Items[v.name].label = label
+					end
+				end
 			end)
 
-			for k,v in pairs(Config.Weapons) do
-				local berat, label = false, false
-				if ESX.Items[v.name] then
-					berat = ESX.Items[v.name].weight
-					label = ESX.Items[v.name].label
-				end
-				ESX.Items[v.name] = {
-					name = v.name,
-					weapon = v.name,
-					label = v.label,
-					ammo = 0,
-					quality = 100,
-					components = {},
-					tintIndex = 0,
-					weight = 1000,
-					limit = false,
-					canRemove = true
-				}
-				if berat then
-					ESX.Items[v.name].weight = berat
-				end
-				if label then
-					ESX.Items[v.name].label = label
-				end
-			end
-		
 			MySQL.Async.fetchAll('SELECT * FROM jobs', {}, function(jobs)
 				for k,v in pairs(jobs) do
 					ESX.Jobs[v.name] = v
