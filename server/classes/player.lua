@@ -281,7 +281,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local item = self.getInventoryItem(name)
 
 		if item then
-			count = ESX.Math.Round(count)
+			count = (item.weapon and 1 or ESX.Math.Round(count))
 			item.count = item.count + count
 			if not itemBatch and ESX.Items[name].batch then
 				itemBatch = ESX.CopyTable(ESX.Items[name].batch)
@@ -316,7 +316,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local item = self.getInventoryItem(name)
 
 		if item then
-			count = ESX.Math.Round(count)
+			count = (item.weapon and 1 or ESX.Math.Round(count))
 			local newCount = item.count - count
 
 			if newCount >= 0 then
